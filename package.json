@@ -1,0 +1,47 @@
+{
+  "name": "@deepseek-ai/dsh-plugin-docker",
+  "version": "0.1.0",
+  "description": "Deployment-level Docker plugin for DeepSeek Harness (DSH): a 容器 (Containers) tab next to chat/trajectory with observe/intervene two-mode UI, 18 model tools (docker_info/ps/images/pull/run/start/stop/restart/rm/rmi/logs/exec/inspect/stats/network/volume/build/cli), read-only live shell watching, and /dock-api/* HTTP routes served via webServer.",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "verify": "node scripts/verify.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "docker",
+    "containers",
+    "plugin",
+    "web"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "license": "MIT"
+}

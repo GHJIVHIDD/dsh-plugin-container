@@ -1,0 +1,104 @@
+# dsh-plugin-docker
+
+> Deployment-level Docker plugin for [DeepSeek Harness](https://github.com/deepseek-ai/DeepSeek-Harness) (DSH) — a **容器 (Containers)** tab right next to Chat / Trajectory, 18 model tools covering all of Docker, and read-only live shell watching.
+>
+> 本地 Docker 容器管理部署级插件:对话/轨迹旁「容器」页签,「仅观察 / 干预」双模式 UI,18 个智能体工具覆盖 Docker 全功能,以及只读的容器 Shell 实时观察(仅观察,无法干预命令运行)。
+
+---
+
+## ✨ Features / 功能特性
+
+- **UI 页签**:与对话/轨迹并列的「容器」页签,风格与 DSH 内置界面一致(简洁、美观)
+- **双模式**:
+  - **仅观察 (observe)** — 默认模式,隐藏全部操作按钮,只能查看详情 / 日志 / Shell,安全只读
+  - **干预 (intervene)** — 显示每容器的 启动 / 停止 / 删除 按钮(删除带二次确认)
+- **实时监控**:Docker 守护进程状态、CPU / 内存占用(动态渐变进度条)、容器数、镜像与磁盘占用,5 秒自动刷新
+- **容器详情**:行内展开 — 状态/镜像/ID/端口/网络/挂载/环境变量/TTY/PID + 进程快照(8s 自动刷新)
+- **日志**:最近 500 行,支持跟随与手动刷新
+- **Shell 观察**:`docker logs -f` 只读实时流(无 stdin,无法干预命令),支持暂停 / 清空 / 重连
+- **18 个模型工具**:`docker_info / ps / images / pull / run / start / stop / restart / rm / rmi / logs / exec / inspect / stats / network / volume / build / cli`(直通任意 docker 子命令)
+
+## 🚀 Install / 安装
+
+### 方式 A:官方 CLI(需要 pnpm)
+
+```sh
+git clone https://github.com/<you>/dsh-plugin-docker.git
+cd dsh-plugin-docker
+
+# 开发期依赖链接(如果插件没有用到 @deepseek-ai 运行时包,可跳过;本插件零外部依赖)
+
+# 安装到 profile(内测阶段用本地路径)
+npx -p @deepseek-ai/dsh dsh plugin --profile web add /absolute/path/to/dsh-plugin-docker
+
+# 重启 dsh(web 或 headless)后生效
+```
+
+### 方式 B:手动安装(与部署内既有插件一致)
+
+```sh
+# 1. 把包复制到 profile 的插件目录
+cp -R dsh-plugin-docker ~/.dsh/profiles/web/node_modules/@deepseek-ai/
+
+# 2. 在 profile 的用户补丁层注册插件行
+cat >> ~/.dsh/profiles/web/cordis.patch.yml << 'EOF'
+
+- insert:
+    - id: ui-docker
+      name: '@deepseek-ai/dsh-plugin-docker'
+EOF
+
+# 3. 重启 profile(或等待 HMR 事务性重读用户补丁;client 名册经增量扫描自动收录)
+```
+
+> 提示:安装后刷新浏览器页面即可看到「容器」页签。
+
+### 卸载
+
+```sh
+# 移除 cordis.patch.yml 中的 ui-docker 行,删除包目录,重启 profile
+rm -rf ~/.dsh/profiles/web/node_modules/@deepseek-ai/dsh-plugin-docker
+```
+
+## 🧩 Architecture / 架构
+
+```
+浏览器 (client, lib/client.js)                     Node (host, lib/index.js)
+┌─────────────────────────────────────┐   fetch    ┌────────────────────────────────────┐
+│ window.__ModuleLoader__.load({...}) │ ── /dock-api/status|inspect|logs|top|op|watch ─▶ │ webServer.register({kind:'exact'}) │
+│ slots.inject('conversation.view')   │ ◀────────── └────────────────────────────────────┘
+│ 双模式 UI / Shell 只读观察            │   JSON        │ tools.register × 18 (docker_*)        │
+└─────────────────────────────────────┘              │ execFile/spawn('docker', ...)       │
+                                                     └────────────────────────────────────┘
+```
+
+- **部署级插件没有 `harness.handle` / `host.call` 私有 RPC** — 面板数据全部走 `webServer` HTTP 路由(`/dock-api/*`),与 VM 沙箱等官方部署插件同一模式
+- host 侧零外部依赖(仅 Node 内置 `node:child_process` / `node:util`);client 侧仅 `require("react")`(浏览器平台模块)
+- 所有副作用(effect)可卸载:路由 disposer、工具注册、watcher 子进程、样式、定时器
+- Shell 观察:host 为每个容器 spawn 一个 `docker logs -f` 只读进程,client 轮询 offset 增量;90 秒无读取自动回收
+
+## ✅ Verify / 离线验证
+
+```sh
+node scripts/verify.mjs
+```
+
+覆盖:双半区语法检查 → host ESM 导出 → mock ctx 下 18 工具 + 7 路由注册 → 真实 `docker_info` 调用(尽力而为)→ client bundle 沙箱模拟执行。
+
+## 📦 Package structure / 包结构
+
+```
+dsh-plugin-docker/
+├── package.json          # dsh.bundle + dsh.client 声明、exports["./client"] 名册扫描硬要求
+├── cordis.patch.yml      # bundle 补丁:向组合树插入 ui-docker 行
+├── lib/
+│   ├── index.js          # host 半区(ESM: apply/inject)
+│   ├── client.js         # client 半区(CJS closure-factory bundle)
+│   └── types/index.d.ts  # host 类型声明
+├── scripts/verify.mjs    # 离线验证
+└── README.md / LICENSE
+```
+
+## 📄 License
+
+[MIT](./LICENSE)
