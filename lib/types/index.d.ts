@@ -1,5 +1,5 @@
 /**
- * @deepseek-ai/dsh-plugin-docker — host half type declarations.
+ * @dsh-community/dsh-plugin-container — host half type declarations.
  *
  * The host half is a Cordis plugin row mounted from `lib/index.js`:
  * - exports a Cordis `apply(ctx)` function that registers 18 docker_* model

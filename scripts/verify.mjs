@@ -1,5 +1,5 @@
 /**
- * Offline verification for @deepseek-ai/dsh-plugin-docker (no dsh server needed).
+ * Offline verification for @dsh-community/dsh-plugin-container (no dsh server needed).
  *
  * Per the DSH plugin development guide (section 4.4):
  *   1. syntax-check both halves
@@ -146,7 +146,7 @@ try {
   }
   vm.createContext(sandbox)
   new vm.Script(src).runInContext(sandbox)
-  if (!loaded || loaded.id !== '@deepseek-ai/dsh-plugin-docker') fail('client bundle must register id @deepseek-ai/dsh-plugin-docker')
+  if (!loaded || loaded.id !== '@dsh-community/dsh-plugin-container') fail('client bundle must register id @dsh-community/dsh-plugin-container')
   const mod = loaded.factory((n) => sandbox.require(n))
   if (typeof mod.apply !== 'function' || !Array.isArray(mod.inject) || !mod.inject.includes('slots')) {
     fail('client bundle must export apply() + inject ["slots"]')

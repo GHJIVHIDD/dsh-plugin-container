@@ -1,8 +1,8 @@
-# dsh-plugin-docker
+# dsh-plugin-container
 
-> Deployment-level Docker plugin for [DeepSeek Harness](https://github.com/deepseek-ai/DeepSeek-Harness) (DSH) — a **容器 (Containers)** tab right next to Chat / Trajectory, 18 model tools covering all of Docker, and read-only live shell watching.
+> [DeepSeek Harness](https://github.com/deepseek-ai/DeepSeek-Harness) (DSH) 的容器管理部署级插件：在对话/轨迹旁提供「容器」页签，支持仅观察/干预双模式 UI、18 个容器管理工具、只读实时 Shell 观察，以及 /dock-api/* HTTP 路由。
 >
-> 本地 Docker 容器管理部署级插件:对话/轨迹旁「容器」页签,「仅观察 / 干预」双模式 UI,18 个智能体工具覆盖 Docker 全功能,以及只读的容器 Shell 实时观察(仅观察,无法干预命令运行)。
+> 本地容器管理部署级插件：对话/轨迹旁「容器」页签，「仅观察 / 干预」双模式 UI，18 个智能体工具覆盖容器管理全功能，以及只读的容器 Shell 实时观察（仅观察，无法干预命令运行）。
 
 ---
 
@@ -12,7 +12,7 @@
 - **双模式**:
   - **仅观察 (observe)** — 默认模式,隐藏全部操作按钮,只能查看详情 / 日志 / Shell,安全只读
   - **干预 (intervene)** — 显示每容器的 启动 / 停止 / 删除 按钮(删除带二次确认)
-- **实时监控**:Docker 守护进程状态、CPU / 内存占用(动态渐变进度条)、容器数、镜像与磁盘占用,5 秒自动刷新
+- **实时监控**:容器守护进程状态、CPU / 内存占用(动态渐变进度条)、容器数、镜像与磁盘占用,5 秒自动刷新
 - **容器详情**:行内展开 — 状态/镜像/ID/端口/网络/挂载/环境变量/TTY/PID + 进程快照(8s 自动刷新)
 - **日志**:最近 500 行,支持跟随与手动刷新
 - **Shell 观察**:`docker logs -f` 只读实时流(无 stdin,无法干预命令),支持暂停 / 清空 / 重连
@@ -26,16 +26,16 @@
 
 ```sh
 # 从 GitHub 安装(public 仓库,无需认证)
-npx -p @deepseek-ai/dsh dsh plugin --profile web add https://github.com/GHJIVHIDD/dsh-plugin-docker
+npx -p @deepseek-ai/dsh dsh plugin --profile web add https://github.com/GHJIVHIDD/dsh-plugin-container
 
 # 或使用 git 简写
-npx -p @deepseek-ai/dsh dsh plugin --profile web add GHJIVHIDD/dsh-plugin-docker
+npx -p @deepseek-ai/dsh dsh plugin --profile web add GHJIVHIDD/dsh-plugin-container
 ```
 
 安装做了什么(官方机制,实测):
 1. pnpm 从仓库安装包,写入 profile 的 `dependencies`
 2. 识别 `dsh.bundle` 声明,自动 reconcile 进 `dsh.profile.bundles` 层
-3. 包的 `cordis.patch.yml` 作为补丁层,自动把 `ui-docker` 插件行插入组合树 —— **无需手动编辑任何文件**
+3. 包的 `cordis.patch.yml` 作为补丁层,自动把 `ui-container` 插件行插入组合树 —— **无需手动编辑任何文件**
 
 **重启 dsh(web 或 headless)后生效**,刷新浏览器页面即可看到「容器」页签。
 
@@ -43,14 +43,14 @@ npx -p @deepseek-ai/dsh dsh plugin --profile web add GHJIVHIDD/dsh-plugin-docker
 
 ```sh
 # 1. 把包复制到 profile 的插件目录
-cp -R dsh-plugin-docker ~/.dsh/profiles/web/node_modules/@deepseek-ai/
+cp -R dsh-plugin-container ~/.dsh/profiles/web/node_modules/@dsh-community/
 
 # 2. 在 profile 的用户补丁层注册插件行
 cat >> ~/.dsh/profiles/web/cordis.patch.yml << 'EOF'
 
 - insert:
-    - id: ui-docker
-      name: '@deepseek-ai/dsh-plugin-docker'
+    - id: ui-container
+      name: '@dsh-community/dsh-plugin-container'
 EOF
 
 # 3. 重启 profile(或等待 HMR 事务性重读用户补丁;client 名册经增量扫描自动收录)
@@ -60,10 +60,10 @@ EOF
 
 ```sh
 # 官方 CLI 安装的:
-dsh plugin --profile web remove @deepseek-ai/dsh-plugin-docker
+dsh plugin --profile web remove @dsh-community/dsh-plugin-container
 
-# 手动安装的:移除 cordis.patch.yml 中的 ui-docker 行,删除包目录,重启 profile
-rm -rf ~/.dsh/profiles/web/node_modules/@deepseek-ai/dsh-plugin-docker
+# 手动安装的:移除 cordis.patch.yml 中的 ui-container 行,删除包目录,重启 profile
+rm -rf ~/.dsh/profiles/web/node_modules/@dsh-community/dsh-plugin-container
 ```
 
 ## 🧩 Architecture / 架构
@@ -94,9 +94,9 @@ node scripts/verify.mjs
 ## 📦 Package structure / 包结构
 
 ```
-dsh-plugin-docker/
+dsh-plugin-container/
 ├── package.json          # dsh.bundle + dsh.client 声明、exports["./client"] 名册扫描硬要求
-├── cordis.patch.yml      # bundle 补丁:向组合树插入 ui-docker 行
+├── cordis.patch.yml      # bundle 补丁:向组合树插入 ui-container 行
 ├── lib/
 │   ├── index.js          # host 半区(ESM: apply/inject)
 │   ├── client.js         # client 半区(CJS closure-factory bundle)

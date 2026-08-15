@@ -1,7 +1,7 @@
 {
-  "name": "@deepseek-ai/dsh-plugin-docker",
+  "name": "@dsh-community/dsh-plugin-container",
   "version": "0.1.0",
-  "description": "Deployment-level Docker plugin for DeepSeek Harness (DSH): a 容器 (Containers) tab next to chat/trajectory with observe/intervene two-mode UI, 18 model tools (docker_info/ps/images/pull/run/start/stop/restart/rm/rmi/logs/exec/inspect/stats/network/volume/build/cli), read-only live shell watching, and /dock-api/* HTTP routes served via webServer.",
+  "description": "DeepSeek Harness (DSH) 的容器管理部署级插件：在对话/轨迹旁提供「容器」页签，支持仅观察/干预双模式 UI、18 个容器管理工具、只读实时 Shell 观察，以及 /dock-api/* HTTP 路由。",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
@@ -26,7 +26,7 @@
   "keywords": [
     "dsh",
     "deepseek-harness",
-    "docker",
+    "container",
     "containers",
     "plugin",
     "web"
