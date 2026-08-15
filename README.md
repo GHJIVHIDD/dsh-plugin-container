@@ -20,21 +20,26 @@
 
 ## 🚀 Install / 安装
 
-### 方式 A:官方 CLI(需要 pnpm)
+### 方式 A:官方 CLI(推荐,已实测验证 ✅)
+
+需要 [pnpm](https://pnpm.io/installation) 与 dsh CLI:
 
 ```sh
-git clone https://github.com/<you>/dsh-plugin-docker.git
-cd dsh-plugin-docker
+# 从 GitHub 安装(public 仓库,无需认证)
+npx -p @deepseek-ai/dsh dsh plugin --profile web add https://github.com/GHJIVHIDD/dsh-plugin-docker
 
-# 开发期依赖链接(如果插件没有用到 @deepseek-ai 运行时包,可跳过;本插件零外部依赖)
-
-# 安装到 profile(内测阶段用本地路径)
-npx -p @deepseek-ai/dsh dsh plugin --profile web add /absolute/path/to/dsh-plugin-docker
-
-# 重启 dsh(web 或 headless)后生效
+# 或使用 git 简写
+npx -p @deepseek-ai/dsh dsh plugin --profile web add GHJIVHIDD/dsh-plugin-docker
 ```
 
-### 方式 B:手动安装(与部署内既有插件一致)
+安装做了什么(官方机制,实测):
+1. pnpm 从仓库安装包,写入 profile 的 `dependencies`
+2. 识别 `dsh.bundle` 声明,自动 reconcile 进 `dsh.profile.bundles` 层
+3. 包的 `cordis.patch.yml` 作为补丁层,自动把 `ui-docker` 插件行插入组合树 —— **无需手动编辑任何文件**
+
+**重启 dsh(web 或 headless)后生效**,刷新浏览器页面即可看到「容器」页签。
+
+### 方式 B:手动安装(备选,与部署内既有插件一致)
 
 ```sh
 # 1. 把包复制到 profile 的插件目录
@@ -51,12 +56,13 @@ EOF
 # 3. 重启 profile(或等待 HMR 事务性重读用户补丁;client 名册经增量扫描自动收录)
 ```
 
-> 提示:安装后刷新浏览器页面即可看到「容器」页签。
-
 ### 卸载
 
 ```sh
-# 移除 cordis.patch.yml 中的 ui-docker 行,删除包目录,重启 profile
+# 官方 CLI 安装的:
+dsh plugin --profile web remove @deepseek-ai/dsh-plugin-docker
+
+# 手动安装的:移除 cordis.patch.yml 中的 ui-docker 行,删除包目录,重启 profile
 rm -rf ~/.dsh/profiles/web/node_modules/@deepseek-ai/dsh-plugin-docker
 ```
 
