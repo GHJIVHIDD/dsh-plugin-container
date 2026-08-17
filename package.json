@@ -1,39 +1,43 @@
 {
   "name": "@dsh-community/dsh-plugin-container",
-  "version": "0.1.0",
-  "description": "DeepSeek Harness 本地 Docker 容器管理部署级插件：提供「容器」页签、仅观察/干预双模式 UI、18 个 docker_* 智能体工具与只读实时 Shell 观察。",
+  "version": "1.0.0",
+  "description": "DeepSeek Harness 的 Docker 容器沙箱部署级插件(与 dsh-plugin-vm-sandbox 全能力对齐):39 个 docker_* 模型工具、快照/回滚、文件传输、端口转发、后台任务、审计、共享/配额/回收、网络策略、多容器并行执行与华丽原生 UI。无需 OrbStack,Linux/Windows/macOS 均可使用。",
   "type": "module",
-  "main": "lib/index.js",
-  "types": "lib/types/index.d.ts",
+  "scripts": {
+    "prepare": "node ./scripts/prepare.mjs",
+    "verify": "node scripts/verify.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "pack": "node scripts/package.mjs"
+  },
+  "main": "dsh-plugin-container/lib/index.js",
+  "types": "dsh-plugin-container/lib/types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./lib/types/index.d.ts",
-      "default": "./lib/index.js"
+      "types": "./dsh-plugin-container/lib/types/index.d.ts",
+      "default": "./dsh-plugin-container/lib/index.js"
     },
-    "./client": "./lib/client.js",
-    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./client": "./dsh-plugin-container/lib/client.js",
+    "./cordis.patch.yml": "./dsh-plugin-container/cordis.patch.yml",
     "./package.json": "./package.json"
   },
   "files": [
-    "lib",
-    "cordis.patch.yml",
-    "README.md",
-    "LICENSE"
+    "dsh-plugin-container/lib",
+    "dsh-plugin-container/cordis.patch.yml",
+    "scripts"
   ],
-  "scripts": {
-    "verify": "node scripts/verify.mjs"
-  },
   "keywords": [
     "dsh",
     "deepseek-harness",
+    "docker",
     "container",
-    "containers",
+    "sandbox",
     "plugin",
-    "web"
+    "web",
+    "native-ui"
   ],
   "dsh": {
     "bundle": {
-      "patch": "./cordis.patch.yml"
+      "patch": "./dsh-plugin-container/cordis.patch.yml"
     },
     "client": {
       "platform": "web",

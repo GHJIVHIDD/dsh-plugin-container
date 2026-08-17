@@ -1,5 +1,0 @@
-# Docker (deployment plugin): inserts the "容器" tab into the conversation view.
-# The host half registers 18 docker_* tools and serves /dock-api/* routes via webServer.
-- insert:
-    - id: ui-container
-      name: '@dsh-community/dsh-plugin-container'

@@ -1,0 +1,6 @@
+# Docker container sandbox (deployment plugin): inserts the "容器" tab into the conversation view.
+# The host half registers 39 docker_* tools and serves /dock-api/* routes via webServer.
+# Capability set is aligned 1:1 with @deepseek-ai/dsh-plugin-vm-sandbox, backed by local Docker.
+- insert:
+    - id: ui-container
+      name: '@dsh-community/dsh-plugin-container'

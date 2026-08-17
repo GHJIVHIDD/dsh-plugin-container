@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>dsh-plugin-container · UI Preview</title>
+<style>
+:root{--ink:#f3f6fc;--mut:#8b95ab;--line:rgba(148,163,184,.18);--card:#0d1424;--soft:rgba(148,163,184,.08);--accent:#5b8cff;--accent2:#38d9c0;--good:#35c58f;--warn:#f5b942;--danger:#ff5c6c}
+html,body{margin:0;height:100%;background:#050a16;color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{padding:20px 22px;box-sizing:border-box}
+.dk{position:relative;max-width:1080px;margin:0 auto;border:1px solid var(--line);border-radius:18px;padding:16px 18px;background:radial-gradient(900px 260px at 12% -10%,rgba(91,140,255,.12),transparent 60%),radial-gradient(700px 240px at 96% 0%,rgba(56,217,192,.09),transparent 62%),#0a101d;box-shadow:0 30px 90px rgba(0,0,0,.4)}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.title{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px}
+.logo{width:27px;height:27px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(91,140,255,.28),rgba(56,217,192,.18));border:1px solid rgba(91,140,255,.4);font-family:ui-monospace,Menlo,monospace;font-weight:800}
+.pill{color:var(--mut);font-size:11px;background:var(--soft);border:1px solid var(--line);padding:2px 8px;border-radius:999px}
+.mode{display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
+.mode button{height:24px;padding:0 12px;border-radius:7px;border:none;background:transparent;color:var(--mut);font-size:11.5px;font-weight:600;cursor:pointer}
+.mode button.on{background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.sp{flex:1}
+.btn{height:28px;padding:0 12px;border-radius:8px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font-size:12px;cursor:pointer}
+.btn.primary{background:linear-gradient(135deg,rgba(91,140,255,.32),rgba(56,217,192,.22));border-color:rgba(91,140,255,.45);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:13px}
+.stat{border:1px solid var(--line);border-radius:13px;background:var(--card);padding:10px 13px 12px}
+.stat b{display:block;font-size:20px;margin-top:2px}
+.stat small{font-size:11px;color:var(--mut);font-weight:500}
+.stat label{color:var(--mut);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.bar{height:4px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:7px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:11px}
+.tabs{display:flex;gap:4px;padding:3px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
+.tabs button{height:24px;padding:0 13px;border-radius:7px;border:none;background:transparent;color:var(--mut);font-size:11.5px;font-weight:600}
+.tabs button.on{background:var(--card);color:var(--ink)}
+input.search{height:28px;width:220px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:12px}
+.row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:8px}
+.row.own{border-left:3px solid var(--accent)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px rgba(53,197,143,.16)}
+.dot.off{background:#7e8ba5;box-shadow:none}
+.name{font-weight:650;font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
+.meta{color:var(--mut);font-size:11.5px}
+.state{margin-left:auto;font-size:11px;font-weight:650;padding:2px 8px;border-radius:999px;background:var(--soft);border:1px solid var(--line);color:var(--good)}
+.state.off{color:var(--warn)}
+.tag{font-size:10px;padding:0 7px;line-height:16px;border-radius:999px;border:1px solid rgba(91,140,255,.42);color:var(--accent);font-weight:700}
+.ops{display:flex;gap:5px}
+.ops button{height:24px;padding:0 9px;border-radius:7px;border:1px solid var(--line);background:var(--soft);color:var(--mut);font-size:11px;cursor:pointer}
+.ops .start{color:var(--good)}.ops .stop{color:var(--warn)}.ops .snap{color:var(--accent2)}.ops .rm{color:var(--danger)}
+.detail{border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(148,163,184,.07);margin-top:-4px;margin-bottom:10px}
+.dtabs{display:flex;gap:4px;margin-bottom:10px}
+.dtabs button{height:25px;padding:0 12px;border-radius:7px;border:1px solid transparent;background:transparent;color:var(--mut);font-size:11.5px}
+.dtabs button.on{background:var(--card);color:var(--ink);border-color:var(--line)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 22px;font-size:11.5px;line-height:1.7}
+.k{color:var(--mut);display:inline-block;width:76px}
+.foot{display:flex;justify-content:space-between;margin-top:10px;color:var(--mut);font-size:10.5px}
+</style>
+</head>
+<body>
+<div class="dk">
+  <div class="head">
+    <span class="title"><span class="logo">⬢</span>容器沙箱 <span class="pill">Docker</span></span>
+    <div class="mode"><button class="on">仅观察</button><button>干预</button></div>
+    <div class="sp"></div>
+    <button class="btn primary">＋ 创建容器</button><button class="btn">刷新</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><label>容器</label><b>2 <small>/ 3 运行</small></b><div class="bar"><i style="width:66%"></i></div></div>
+    <div class="stat"><label>镜像 · 磁盘</label><b>14 <small>· 18.1 MB</small></b></div>
+    <div class="stat"><label>CPU</label><b>1.2% <small>8 核</small></b><div class="bar"><i style="width:4%"></i></div></div>
+    <div class="stat"><label>内存</label><b>45.2 MB <small>/ 3.9 GB</small></b><div class="bar"><i style="width:2%"></i></div></div>
+  </div>
+  <div class="toolbar">
+    <div class="tabs"><button class="on">容器 3</button><button>快照 2</button></div>
+    <input class="search" placeholder="搜索名称 / 镜像 / 状态" /><div class="sp"></div><span class="pill">上限 64 · 每会话 8</span>
+  </div>
+  <div class="row own"><span class="dot"></span><span class="name">web-cache</span><span class="meta">nginx:1.27-alpine</span><span class="meta">1.8% · 12.1 MB</span><span class="state">运行中</span><span class="tag">本会话</span><span class="ops"><button class="start">启动</button><button class="stop">停止</button><button>重启</button><button class="snap">快照</button><button class="rm">删除</button></span></div>
+  <div class="detail">
+    <div class="dtabs"><button class="on">概览</button><button>日志</button><button>Shell</button><button>任务</button><button>端口</button></div>
+    <div class="grid">
+      <span><span class="k">状态</span>running</span>
+      <span><span class="k">镜像</span>nginx:1.27-alpine</span>
+      <span><span class="k">IP / 网络</span>192.168.97.2 / dsh-sandbox</span>
+      <span><span class="k">网络策略</span>公网 · 内网互通</span>
+      <span><span class="k">端口</span>127.0.0.1:8080→80</span>
+      <span><span class="k">CPU 限额</span>2</span>
+      <span><span class="k">内存限额</span>512.0 MB</span>
+      <span><span class="k">磁盘配额</span>10 GB</span>
+    </div>
+  </div>
+  <div class="row"><span class="dot off"></span><span class="name">db-postgres</span><span class="meta">postgres:16-alpine</span><span class="meta">0.0% · 8.4 MB</span><span class="state off">已停止</span></div>
+  <div class="row"><span class="dot off"></span><span class="name">builder</span><span class="meta">golang:1.24</span><span class="meta">0.0% · 0 B</span><span class="state off">已退出</span></div>
+  <div class="foot"><span>Docker 29.4.0 · 干预模式 · 可管理容器/快照/任务/端口</span><span>每 5s 自动刷新 · 与 dsh-plugin-vm-sandbox 同能力集</span></div>
+</div>
+</body>
+</html>
