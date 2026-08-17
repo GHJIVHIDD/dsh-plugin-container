@@ -1,7 +1,7 @@
 /**
  * Host loader entry for the deployment-level Docker container sandbox plugin.
  *
- * v1.0.1 — full parity with the official VM sandbox plugin (dsh-plugin-vm-sandbox)
+ * v1.0.2 — full parity with the official VM sandbox plugin (dsh-plugin-vm-sandbox)
  * implemented on top of the local Docker Engine so Linux / Windows / macOS
  * users without OrbStack get the same sandbox capabilities:
  *
@@ -1942,7 +1942,8 @@ function apply(ctx) {
         pushAudit(sessionId, out.container || '', 'docker_create', { image: opts.image, via: 'panel' }, true, null)
         sendJson(res, 200, out)
       } catch (err) {
-        pushAudit(sessionId, sanitizeContainerName(queryOf(req).get('name') || ''), 'docker_create', { image: queryOf(req).get('image') || '', via: 'panel' }, false, (err && err.message) || err)
+        const sid = sessionOfReq(req)
+        pushAudit(sid, sanitizeContainerName(queryOf(req).get('name') || ''), 'docker_create', { image: queryOf(req).get('image') || '', via: 'panel' }, false, (err && err.message) || err)
         sendJson(res, 500, { ok: false, error: String((err && err.message) || err).slice(0, 400) })
       }
     })
@@ -3140,7 +3141,7 @@ function apply(ctx) {
     })
   }
 
-  try { console.log('[dock] Docker sandbox deployment plugin ready (v1.0.1, cap ' + MAX_RUNNING + ', max-per-session ' + MAX_PER_SESSION + ')') } catch (e) { /* ignore */ }
+  try { console.log('[dock] Docker sandbox deployment plugin ready (v1.0.2, cap ' + MAX_RUNNING + ', max-per-session ' + MAX_PER_SESSION + ')') } catch (e) { /* ignore */ }
 }
 
 export { apply }

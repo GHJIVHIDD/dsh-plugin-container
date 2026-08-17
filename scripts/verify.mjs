@@ -102,6 +102,21 @@ try {
   if (registeredRoutes.length !== EXPECT_ROUTES.length || missingRoutes.length) {
     fail('expected ' + EXPECT_ROUTES.length + ' routes, got ' + registeredRoutes.length + (missingRoutes.length ? '; missing ' + missingRoutes.join(', ') : ''))
   } else pass('host registers ' + EXPECT_ROUTES.length + ' /dock-api/* routes')
+  // Regression: route catch blocks must never throw. A missing-session
+  // /dock-api/create request must answer JSON 500, not reject the handler.
+  try {
+    const createRoute = registeredRoutes.find((r) => r.path === '/dock-api/create')
+    if (!createRoute) throw new Error('create route not registered')
+    let statusCode = 0
+    let body = ''
+    const fakeRes = { statusCode: 0, setHeader() {}, end(text) { body = String(text || '') } }
+    await createRoute.handler({ url: '/dock-api/create?image=alpine' }, fakeRes)
+    const parsed = JSON.parse(body)
+    if (fakeRes.statusCode !== 500 || parsed.ok !== false || !parsed.error) throw new Error('unexpected create-route error response: ' + body)
+    pass('route error path regression OK (/dock-api/create -> JSON 500)')
+  } catch (e) {
+    fail('route error path regression: ' + String((e && e.message) || e))
+  }
 } catch (e) {
   fail('apply() smoke: ' + String((e && e.message) || e))
 }

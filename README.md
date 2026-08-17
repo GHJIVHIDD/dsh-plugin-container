@@ -160,10 +160,10 @@ npx -p @deepseek-ai/dsh dsh plugin --profile web add GHJIVHIDD/dsh-plugin-contai
 
 ### 方式 B：Releases tgz 安装
 
-从 [Releases](https://github.com/GHJIVHIDD/dsh-plugin-container/releases) 下载 `dsh-plugin-container-1.0.1.tgz`，在包所在目录执行：
+从 [Releases](https://github.com/GHJIVHIDD/dsh-plugin-container/releases) 下载 `dsh-plugin-container-1.0.2.tgz`，在包所在目录执行：
 
 ```bash
-dsh plugin --profile web add ./dsh-plugin-container-1.0.1.tgz
+dsh plugin --profile web add ./dsh-plugin-container-1.0.2.tgz
 ```
 
 ### 方式 C：手动安装
@@ -207,7 +207,7 @@ dsh --profile web
   - Windows：Docker Desktop（建议启用 WSL2 backend）。
   - macOS：Docker Desktop 或 OrbStack 的 Docker context。
 - 端口转发依赖 `alpine/socat`（官方镜像，首次使用自动 pull）。
-- 插件版本：1.0.1。
+- 插件版本：1.0.2。
 
 ## 验证
 
@@ -325,6 +325,12 @@ dsh-plugin-container/
 - 旧的 7 个 `/dock-api/*` 路由与 18 个 `docker_*` 工具全部保留，现有用法不受影响。
 - 插件登记容器新增 owner / share 权限校验；跨会话未共享时，原可操作行为会被拒绝（更安全，与 VM 沙箱一致）。
 - `docker_run` / `docker_create` 默认网络由 `bridge` 改为 `dsh-sandbox`（自动创建），便于统一网络策略治理；可通过 `network` 参数覆盖。
+
+## v1.0.2 修复内容（详细）
+
+- 修复 `/dock-api/create` 路由错误分支的 `sessionId` 作用域错误：缺少 `session` 或创建失败时，catch 分支原先会因未定义变量再次抛错，导致 `webServer` 返回 400 空响应而不是 JSON 500。
+- `scripts/verify.mjs` 新增路由错误路径回归：直接调用 `/dock-api/create` 缺失 session 的 handler，断言返回 JSON 500 且 handler 不 reject。
+- 完整 HTTP 路由实测（15/15）在 v1.0.2 通过。
 
 ## v1.0.1 修复内容（详细）
 
