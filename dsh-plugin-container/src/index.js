@@ -1,7 +1,7 @@
 /**
  * Host loader entry for the deployment-level Docker container sandbox plugin.
  *
- * v1.0.2 — full parity with the official VM sandbox plugin (dsh-plugin-vm-sandbox)
+ * v1.0.3 — full parity with the official VM sandbox plugin (dsh-plugin-vm-sandbox)
  * implemented on top of the local Docker Engine so Linux / Windows / macOS
  * users without OrbStack get the same sandbox capabilities:
  *
@@ -921,7 +921,7 @@ function buildRunArgs(o) {
   if (o.memory != null && String(o.memory).trim() !== '') argv.push('--memory', String(o.memory))
   if (o.memorySwap != null && String(o.memorySwap).trim() !== '') argv.push('--memory-swap', String(o.memorySwap))
   if (o.shmSize != null && String(o.shmSize).trim() !== '') argv.push('--shm-size', String(o.shmSize))
-  if (o.pidsLimit != null) argv.push('--pids-limit', String(o.pidsLimit))
+  if (o.pidsLimit != null && String(o.pidsLimit).trim() !== '') argv.push('--pids-limit', String(o.pidsLimit))
   if (o.diskQuota != null && String(o.diskQuota).trim() !== '') argv.push('--storage-opt', 'size=' + String(o.diskQuota))
   if (o.readOnly) argv.push('--read-only')
   for (const t of strList(o.tmpfs)) argv.push('--tmpfs', t)
@@ -3141,7 +3141,7 @@ function apply(ctx) {
     })
   }
 
-  try { console.log('[dock] Docker sandbox deployment plugin ready (v1.0.2, cap ' + MAX_RUNNING + ', max-per-session ' + MAX_PER_SESSION + ')') } catch (e) { /* ignore */ }
+  try { console.log('[dock] Docker sandbox deployment plugin ready (v1.0.3, cap ' + MAX_RUNNING + ', max-per-session ' + MAX_PER_SESSION + ')') } catch (e) { /* ignore */ }
 }
 
 export { apply }

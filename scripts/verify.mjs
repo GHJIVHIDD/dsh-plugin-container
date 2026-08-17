@@ -41,6 +41,11 @@ for (const f of [
   else pass('syntax OK: ' + f)
 }
 
+// 1b. static regressions on generated docker argv guards
+const hostSource = readFileSync(join(srcDir, 'index.js'), 'utf8')
+if (!hostSource.includes("String(o.pidsLimit).trim() !== ''")) fail('pids-limit empty-string guard regression (buildRunArgs)')
+else pass('static regression OK: empty pids_limit never becomes --pids-limit ""')
+
 // 2. host ESM exports
 let host = null
 try {

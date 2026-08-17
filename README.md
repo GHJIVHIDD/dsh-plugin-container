@@ -160,10 +160,10 @@ npx -p @deepseek-ai/dsh dsh plugin --profile web add GHJIVHIDD/dsh-plugin-contai
 
 ### 方式 B：Releases tgz 安装
 
-从 [Releases](https://github.com/GHJIVHIDD/dsh-plugin-container/releases) 下载 `dsh-plugin-container-1.0.2.tgz`，在包所在目录执行：
+从 [Releases](https://github.com/GHJIVHIDD/dsh-plugin-container/releases) 下载 `dsh-plugin-container-1.0.3.tgz`，在包所在目录执行：
 
 ```bash
-dsh plugin --profile web add ./dsh-plugin-container-1.0.2.tgz
+dsh plugin --profile web add ./dsh-plugin-container-1.0.3.tgz
 ```
 
 ### 方式 C：手动安装
@@ -207,7 +207,7 @@ dsh --profile web
   - Windows：Docker Desktop（建议启用 WSL2 backend）。
   - macOS：Docker Desktop 或 OrbStack 的 Docker context。
 - 端口转发依赖 `alpine/socat`（官方镜像，首次使用自动 pull）。
-- 插件版本：1.0.2。
+- 插件版本：1.0.3。
 
 ## 验证
 
@@ -325,6 +325,12 @@ dsh-plugin-container/
 - 旧的 7 个 `/dock-api/*` 路由与 18 个 `docker_*` 工具全部保留，现有用法不受影响。
 - 插件登记容器新增 owner / share 权限校验；跨会话未共享时，原可操作行为会被拒绝（更安全，与 VM 沙箱一致）。
 - `docker_run` / `docker_create` 默认网络由 `bridge` 改为 `dsh-sandbox`（自动创建），便于统一网络策略治理；可通过 `network` 参数覆盖。
+
+## v1.0.3 修复内容（详细）
+
+- 修复面板创建容器时 `pids_limit` 留空被透传为 `--pids-limit ""` 导致 Docker 报 `invalid argument ""` 的问题；空值现在与未传值一致，不再生成参数。
+- `scripts/verify.mjs` 新增静态回归断言：`buildRunArgs` 的 pids-limit 分支必须带非空字符串保护。
+- 修复后 `/dock-api/create` 全参数路径实测通过。
 
 ## v1.0.2 修复内容（详细）
 
