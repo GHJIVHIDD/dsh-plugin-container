@@ -1,7 +1,7 @@
 /**
  * Host loader entry for the deployment-level Docker container sandbox plugin.
  *
- * v1.0.0 — full parity with the official VM sandbox plugin (dsh-plugin-vm-sandbox)
+ * v1.0.1 — full parity with the official VM sandbox plugin (dsh-plugin-vm-sandbox)
  * implemented on top of the local Docker Engine so Linux / Windows / macOS
  * users without OrbStack get the same sandbox capabilities:
  *
@@ -1493,7 +1493,17 @@ async function readJobStatus(job) {
     job.endTime = Date.now()
     saveState()
   }
-  return { status: stateText, exitCode: exitCode === null && job.status === 'done' ? job.exitCode : exitCode, endTime, tail, stdout: tail, stderr: '' }
+  // 终态(stop 主动停止、invalidate 终止)不得被探针的 running/dead 覆盖
+  const terminal = job.status === 'done' || job.status === 'error' || job.status === 'stopped'
+  const status = terminal ? job.status : stateText
+  return {
+    status,
+    exitCode: status === 'done' ? (exitCode !== null ? exitCode : job.exitCode) : (status === 'stopped' ? null : exitCode),
+    endTime: status === 'stopped' ? job.endTime : (status === 'done' ? (endTime || job.endTime) : endTime),
+    tail,
+    stdout: tail,
+    stderr: '',
+  }
 }
 async function stopJob(ctx, sessionId, jobId) {
   const job = jobById(jobId)
@@ -3130,7 +3140,7 @@ function apply(ctx) {
     })
   }
 
-  try { console.log('[dock] Docker sandbox deployment plugin ready (v1.0.0, cap ' + MAX_RUNNING + ', max-per-session ' + MAX_PER_SESSION + ')') } catch (e) { /* ignore */ }
+  try { console.log('[dock] Docker sandbox deployment plugin ready (v1.0.1, cap ' + MAX_RUNNING + ', max-per-session ' + MAX_PER_SESSION + ')') } catch (e) { /* ignore */ }
 }
 
 export { apply }

@@ -157,7 +157,14 @@ try {
   assert(jobList.ok && jobList.jobs.length >= 1, 'docker_job_list missing job')
   const jobOut = await run('docker_job_output', { job_id: job.job.id })
   assert(jobOut.log.includes('job-3'), 'docker_job_output missing tail: ' + jobOut.log)
-  pass('docker_job_submit / list / status / output OK')
+  const longJob = await run('docker_job_submit', { container: mainName, command: 'sleep 300; echo long-done' })
+  assert(longJob.ok && longJob.job.status === 'running', 'long job should start running')
+  const stoppedJob = await run('docker_job_stop', { job_id: longJob.job.id })
+  assert(stoppedJob.ok && stoppedJob.job.status === 'stopped', 'docker_job_stop failed')
+  const listAfterStop = await run('docker_job_list', { container: mainName, limit: 20 })
+  const listedStopped = listAfterStop.jobs.find((j) => j.id === longJob.job.id)
+  assert(listedStopped && listedStopped.status === 'stopped' && listedStopped.endTime != null, 'stopped job must remain stopped in job list: ' + JSON.stringify(listedStopped))
+  pass('docker_job_submit / list / status / output / stop OK')
 
   // ---- real port forwarding (socat echo) ----
   const echoRun = await run('docker_cli', { args: ['run', '-d', '--name', echoName, 'alpine/socat', 'tcp-listen:23456,fork,reuseaddr', 'exec:cat'] })

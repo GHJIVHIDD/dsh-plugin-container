@@ -160,10 +160,10 @@ npx -p @deepseek-ai/dsh dsh plugin --profile web add GHJIVHIDD/dsh-plugin-contai
 
 ### 方式 B：Releases tgz 安装
 
-从 [Releases](https://github.com/GHJIVHIDD/dsh-plugin-container/releases) 下载 `dsh-plugin-container-1.0.0.tgz`，在包所在目录执行：
+从 [Releases](https://github.com/GHJIVHIDD/dsh-plugin-container/releases) 下载 `dsh-plugin-container-1.0.1.tgz`，在包所在目录执行：
 
 ```bash
-dsh plugin --profile web add ./dsh-plugin-container-1.0.0.tgz
+dsh plugin --profile web add ./dsh-plugin-container-1.0.1.tgz
 ```
 
 ### 方式 C：手动安装
@@ -207,7 +207,7 @@ dsh --profile web
   - Windows：Docker Desktop（建议启用 WSL2 backend）。
   - macOS：Docker Desktop 或 OrbStack 的 Docker context。
 - 端口转发依赖 `alpine/socat`（官方镜像，首次使用自动 pull）。
-- 插件版本：1.0.0。
+- 插件版本：1.0.1。
 
 ## 验证
 
@@ -325,6 +325,12 @@ dsh-plugin-container/
 - 旧的 7 个 `/dock-api/*` 路由与 18 个 `docker_*` 工具全部保留，现有用法不受影响。
 - 插件登记容器新增 owner / share 权限校验；跨会话未共享时，原可操作行为会被拒绝（更安全，与 VM 沙箱一致）。
 - `docker_run` / `docker_create` 默认网络由 `bridge` 改为 `dsh-sandbox`（自动创建），便于统一网络策略治理；可通过 `network` 参数覆盖。
+
+## v1.0.1 修复内容（详细）
+
+- 修复 `docker_job_stop` 主动停止的后台任务，在随后 `docker_job_list` / `docker_job_status` 探针中被错误覆盖为 `running` 的终态污染问题。
+- `readJobStatus` 现在对 `done` / `error` / `stopped` 三种终态严格保护：终态不会被 `docker exec` 探针的 `running` / `dead` 覆盖，`endTime` 与退出码同样保持稳定。
+- `scripts/smoke.mjs` 新增回归断言：提交长任务 → `docker_job_stop` → `docker_job_list` 必须保持 `stopped` 且 `endTime` 非空。
 
 ## License
 

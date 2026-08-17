@@ -1,6 +1,6 @@
 {
   "name": "@dsh-community/dsh-plugin-container",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DeepSeek Harness 的 Docker 容器沙箱部署级插件(与 dsh-plugin-vm-sandbox 全能力对齐):39 个 docker_* 模型工具、快照/回滚、文件传输、端口转发、后台任务、审计、共享/配额/回收、网络策略、多容器并行执行与华丽原生 UI。无需 OrbStack,Linux/Windows/macOS 均可使用。",
   "type": "module",
   "scripts": {
