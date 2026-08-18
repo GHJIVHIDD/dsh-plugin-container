@@ -344,9 +344,6 @@ dsh-plugin-container/
 - `readJobStatus` 现在对 `done` / `error` / `stopped` 三种终态严格保护：终态不会被 `docker exec` 探针的 `running` / `dead` 覆盖，`endTime` 与退出码同样保持稳定。
 - `scripts/smoke.mjs` 新增回归断言：提交长任务 → `docker_job_stop` → `docker_job_list` 必须保持 `stopped` 且 `endTime` 非空。
 
-## License
-
-[MIT](./LICENSE)
 
 ### License
 
